@@ -9,9 +9,9 @@ impl Part1 {
     fn parse_file(file_path: String) -> (Vec<i32>, Vec<i32>) {
         let (mut left_list, mut right_list) = (Vec::new(), Vec::new());
 
-        if let Ok(file) = File::open(file_path) {
-            for line in BufReader::new(file).lines() {
-                if let Ok(line) = line {
+        match File::open(file_path) {
+            Ok(file) => {
+                for line in BufReader::new(file).lines().map_while(Result::ok) {
                     let numbers: Vec<i32> = line
                         .split_whitespace()
                         .map(|s| s.parse::<i32>().unwrap())
@@ -21,7 +21,8 @@ impl Part1 {
                     right_list.push(numbers[1]);
                 }
             }
-        }
+            Err(_) => eprintln!("We couldn't find that file 😞"),
+        };
 
         (left_list, right_list)
     }
